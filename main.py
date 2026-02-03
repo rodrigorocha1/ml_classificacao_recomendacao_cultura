@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
 pd.set_option("display.max_rows", 200)
 pd.set_option("display.max_columns", 1000)
 pd.set_option("display.width", 1000)
@@ -98,3 +101,26 @@ plt.savefig('fig/exploratoria/boxplots_by_crop.png')
 
 print("Code executed successfully.")
 print(df_final.head())
+
+
+X = df_final.drop(columns=["Cultura"])
+y = df_final["Cultura"]
+
+# 3. Split treino / teste
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# 4. Instanciar e treinar o modelo
+modelo = GaussianNB()
+modelo.fit(X_train, y_train)
+
+# 5. Previsões
+y_pred = modelo.predict(X_test)
+
+# 6. Avaliação
+print("Acurácia:", accuracy_score(y_test, y_pred))
+print("\nRelatório de Classificação:")
+print(classification_report(y_test, y_pred))
+print("\nMatriz de Confusão:")
+print(confusion_matrix(y_test, y_pred))
